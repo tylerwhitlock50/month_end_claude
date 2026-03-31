@@ -1,0 +1,58 @@
+# ===========================================
+# Month-End Close Process - .gitignore
+# ===========================================
+# This repo is a TEMPLATE. All actual company
+# data stays local and never gets committed.
+# Folder structure is preserved via .gitkeep.
+# ===========================================
+
+# ---- Source data (ERP exports, CSVs, XMLs) ----
+inputs/*
+!inputs/.gitkeep
+
+trial balance/*
+!trial balance/.gitkeep
+
+# ---- Working evidence (reconciliation workbooks) ----
+evidence/*
+!evidence/.gitkeep
+
+# ---- Final reports and presentations ----
+reports/*
+!reports/.gitkeep
+
+# ---- Automation scripts (may contain hardcoded balances) ----
+scripts/*
+!scripts/.gitkeep
+
+# ---- Reconciliation instructions (user-specific) ----
+documents/*
+!documents/examples/
+
+# ---- Personal task tracking ----
+todo.md
+
+# ---- Excel temp/lock files ----
+~$*.xlsx
+~$*.xls
+~$*.csv
+
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# ---- IDE / Editor ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
