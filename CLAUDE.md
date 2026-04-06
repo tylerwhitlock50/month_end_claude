@@ -2,7 +2,7 @@
 
 ## What This Project Is
 
-This is the month-end close reconciliation for Future Comp, LLC (consolidated). The goal is to tie every balance sheet account to the Trial Balance using subledger detail, flag variances, and produce clean evidence files for reviewer sign-off.
+This is the month-end close reconciliation for Acme Manufacturing Co. The goal is to tie every balance sheet account to the Trial Balance using subledger detail, flag variances, and produce clean evidence files for reviewer sign-off.
 
 ## How to Work in This Project
 
@@ -17,7 +17,7 @@ This is the month-end close reconciliation for Future Comp, LLC (consolidated). 
 
 | Folder | Purpose |
 |---|---|
-| `/inputs` | Raw subledger exports, aging reports, valuation reports, reserve files |
+| `/inputs` | Raw subledger exports, aging reports, amortization schedules |
 | `/trial_balance` | Trial Balance — always use the most recent file |
 | `/evidence` | Final reconciled workbooks with TB tags (primary output) |
 | `/documents` | Per-account instruction files and historical notes |
@@ -26,28 +26,22 @@ This is the month-end close reconciliation for Future Comp, LLC (consolidated). 
 
 ## Scripts
 
-Several reconciliations have been scripted for repeatability. These live in `/scripts` and can be re-run when updated source files are provided:
-
-- `reconcile_inventory_reserves.py` — Reconciles 12090 and 12521 by extracting reserve detail, joining to inventory valuation, comparing to TB. Outputs JSON lookup + evidence file.
-- `inventory_valuation_recon.py` — Reconciles 12010 and 12050 from the TGW Inventory Valuation Account Category report.
-- `fam_recon.py` — Reconciles all 15xxx fixed asset and accumulated depreciation accounts from FAM export.
-- `accrued_recon_cleanup.py` — Cleans and reconciles 22050 accrued purchases.
-- `is_analysis.py` — Income statement preliminary analysis vs TB.
+- `scan_tags.py` — Scans all evidence files for `#TB` tags, extracts the tagged amount and nearest balance, compares to the Trial Balance. Run after completing reconciliations to verify all tags agree.
 
 ## Materiality Thresholds
 
 - General: exact match expected unless otherwise noted
-- Inventory reserves (12090, 12521): $15,000 threshold — differences below this are considered tied
 - Immaterial variances (< $100 on any account): note and move on
 
 ## Key Account Notes
 
-- **12050 (FG)**: Valuation report may not include CSS finished goods — gap likely relates to 12521. Also depends on costing being complete.
-- **12090 (Inventory Allowance)**: Reserve detail available via Inventory Reserves workbook. Reasonableness check required each period (allowance as % of gross inventory, category breakdown, CONCUR/UPDATE conclusion).
-- **12521 (CSS Inventory Value)**: Reserve detail in same workbook as 12090. 335 bicycle items, mix of full and partial reserves.
-- **15075 (Skyshare)**: Known exclusion from FAM — tracked outside the system. Just confirm TB balance.
-- **13xxx (Prepaids)**: Gaps between amortization schedules and TB are expected before memorized transactions post. Will close after month-end posting.
+- **1000 (Cash)**: Reconcile GL ending balance to TB, then perform bank-to-book reconciliation. Bank-only items (NSF, fees, interest) require adjusting JEs.
+- **1100 (AR)**: AR aging total should tie to TB. Allowance (1200) is reconciled alongside but tagged separately.
+- **1500/1510 (Fixed Assets)**: Gross cost should tie exactly. Accumulated depreciation may lag if monthly depreciation JEs haven't posted.
+- **2000 (AP)**: AP aging total should tie directly to TB — no allowance offset.
+- **2200/2300 (Debt)**: Reconcile to amortization schedule. Current/LT split should match next-12-months principal calculation.
+- **5500 (Interest)**: Tie YTD interest expense to amortization schedule interest column.
 
 ## Current Status
 
-Track progress in `todo.md`. As of last update, one open item remains (12050 pending costing completion).
+Track progress in `todo.md`. Accounts with evidence files: 1000, 1100, 1200, 1500, 1510, 2000, 2200, 2300, 5500. Accounts still needing input files: 1300 (Inventory), 1400 (Prepaids), 1600/1610 (Intangibles), 2100 (Accrued Liabilities), and all income statement accounts.

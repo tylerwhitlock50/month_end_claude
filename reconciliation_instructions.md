@@ -19,15 +19,23 @@ A human reviewer will validate your work, so clarity and accuracy matter more th
 ## Folder Structure
 
 ### `/inputs`
-Raw files to be reconciled (bank recs, AR aging, AP detail, etc.)
+Raw files to be reconciled (bank statements, GL detail, AR aging, AP aging, asset registers, amortization schedules, etc.)
 
 ### `/trial_balance`
-Source of truth for balances  
+Source of truth for balances
 → Always use the most recent file in this folder
 
 ### `/evidence`
-Final reconciled files with tags added  
+Final reconciled lead sheets with tags added
 → This is your primary output location
+
+### `/documents`
+Per-account instruction files (`instruction_{account_number}.md`) and example templates
+→ Read the relevant instruction file before starting any account. Create or update one for every account you reconcile.
+
+### `/scripts`
+Reusable Python scripts for automated checks
+→ Run `scan_tags.py` after completing reconciliations to verify all tags agree with the TB
 
 ### `/reports`
 Optional summaries, explanations, or analysis (Word, slides, etc.)
@@ -69,7 +77,7 @@ You must tag reconciled balances using the exact format:
 
 **Example:**
 ```
-#TB:12030:15234.55
+#TB:1100:387250
 ```
 
 #### Tag Placement Rules
@@ -84,15 +92,19 @@ You must tag reconciled balances using the exact format:
 
 Save all outputs to `/evidence`
 
-Files must be:
+### Lead Sheet Structure
 
-- Clean and readable
-- Same structure as input where possible
+Each evidence file should be an `.xlsx` workbook with at minimum:
+
+1. **Lead Sheet tab** — Account summary showing TB balance, subledger/source balance, variance (if any), TB tag, conclusion, and reviewer sign-off line
+2. **Detail tab(s)** — Supporting detail from the source document (e.g., aging by customer, asset register, amortization schedule)
+
+For Cash (Account 1000), include a **Bank Reconciliation** tab and a **Transaction Matching** tab.
 
 ### Supported Formats
 
-- `.csv`
-- `.xlsx`
+- `.xlsx` (preferred — supports multiple tabs, formatting, and formulas)
+- `.csv` (only if single-tab output with no formulas)
 
 ### Do NOT:
 
@@ -127,8 +139,7 @@ VARIANCE: $1,245.32 (Unreconciled)
 Some accounts require a reasonableness assessment beyond just tying to the Trial Balance. When applicable, add a separate "Reasonableness" tab or section to the evidence file.
 
 Reasonableness checks are documented in their own per-account instruction files in `/documents`. See:
-- `instruction_11099.md` — Allowance for Doubtful Accounts
-- `instruction_12090.md` — Inventory Allowance
+- `instruction_1200.md` — Allowance for Doubtful Accounts (if applicable)
 
 ### General Reasonableness Guidance
 
@@ -198,6 +209,9 @@ A reconciliation is complete when:
 - Tag is correctly applied
 - File is saved to `/evidence`
 - A human can quickly understand what was done
+- Instruction doc exists in `/documents` for the account
+- `todo.md` is updated
+- `scan_tags.py` confirms the tag agrees with the TB
 
 ---
 
@@ -268,19 +282,19 @@ Use the following structure:
 
 ## Open Items
 
-- [ ] Account: 12030  
-  Issue: AR aging total does not match trial balance  
-  Needed: Updated AR report as of month-end  
-  Source File: /inputs/ar_aging_march.xlsx
+- [ ] Account: 1100
+  Issue: AR aging total does not match trial balance
+  Needed: Updated AR report as of month-end
+  Source File: /inputs/AR Aging — March 2026.xlsx
 
 ## In Progress
 
-- [ ] Account: 10100  
+- [ ] Account: 1000
   Status: Matching bank transactions to GL activity
 
 ## Completed
 
-- [x] Account: 20010  
+- [x] Account: 2000
   Resolution: AP subledger matched to TB after removing duplicate entry
 ```
 
