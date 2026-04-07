@@ -64,3 +64,5 @@ analytics_groupings.csv
 analytics_presets.csv
 analytics_ratio_definitions.csv
 analytics_rule_definitions.csv
+
+.result.txt
